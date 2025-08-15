@@ -54,7 +54,21 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
 ```
-Your answer...
+Architecture that will OVERWRITE changes (Type 1)
+
+The CUSTOMER_ADDRESS table stores one record per customer, Example: Address. If a customer’s address changes, the old value is replaced with the new one using an UPDATE statement. This means the old address is lost and only the most recent data is kept.
+Advantage: (1) Simple to implement. (2) Efficient and space-saving
+Disadvantages: (1) No ability to analyze trends or prior states. (2) Irreversible data loss of old values
+
+Architecture that will RETAIN changes (Type 2)
+
+The CUSTOMER_ADDRESS table stores multiple records for each customer, each tied to a start date and end date, plus a flag (is_current) to mark the active record.
+When a customer’s postal code changes: The current record’s effective_end_date is set to the date the new address becomes active, and is_current is set to FALSE.
+A new record is inserted with the new postal code, the new effective_start_date, and is_current set to TRUE.
+This means all historical addresses are preserved, allowing you to see the customer’s address history over time.
+Advantages: (1) Full audit trail and historical analysis capability. (2) Essential for accurate, time-variant reporting
+Disadvantages: (1) Greater storage usage. (2) Increased complexity in ETL and querying logic
+
 ```
 
 ***
